@@ -32,15 +32,15 @@ def to_num(s: str):
 def add_values_to_dataset(dataset, value, group_to_mean):
     means = dataset.groupby(group_to_mean)[value].mean()
     dataset[value] = dataset[value].fillna(
-        predict_dataset[group_to_mean].map(means)
+        dataset[group_to_mean].map(means)
     )
 
 def split_data_set(dataset, percentage):
 
     rng = np.random.default_rng()
-    mask = rng.random(len(df)) < percentage
-    bigger_df = df[mask].copy()
-    less_df = df[~mask].copy()
+    mask = rng.random(len(dataset)) < percentage
+    bigger_df = dataset[mask].copy()
+    less_df = dataset[~mask].copy()
     return bigger_df, less_df
 
 
@@ -68,9 +68,11 @@ predict_dataset = df.loc[na_price_data_mask, use_cols]
 
 train_test_dataset['price'] = train_test_dataset['price'].apply(to_num)
 
-add_values_to_dataset(predict_dataset, 'bedrooms', 'accommodates')
-
 learn_dataset, test_dataset = split_data_set(train_test_dataset, 0.8)
+
+add_values_to_dataset(predict_dataset, 'bedrooms', 'accommodates')
+add_values_to_dataset(learn_dataset, 'bedrooms', 'accommodates')
+add_values_to_dataset(test_dataset, 'bedrooms', 'accommodates')
 
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):
     print(learn_dataset)
