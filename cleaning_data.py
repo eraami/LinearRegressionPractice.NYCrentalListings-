@@ -1,3 +1,5 @@
+import random
+
 import pandas as pd
 import numpy as np
 
@@ -32,7 +34,15 @@ def add_values_to_dataset(dataset, value, group_to_mean):
     dataset[value] = dataset[value].fillna(
         predict_dataset[group_to_mean].map(means)
     )
-    print(means)
+
+def split_data_set(dataset, percentage):
+
+    rng = np.random.default_rng()
+    mask = rng.random(len(df)) < percentage
+    bigger_df = df[mask].copy()
+    less_df = df[~mask].copy()
+    return bigger_df, less_df
+
 
 use_cols = [
     'neighbourhood_group_cleansed',
@@ -60,7 +70,8 @@ train_test_dataset['price'] = train_test_dataset['price'].apply(to_num)
 
 add_values_to_dataset(predict_dataset, 'bedrooms', 'accommodates')
 
+learn_dataset, test_dataset = split_data_set(train_test_dataset, 0.8)
 
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-    print(predict_dataset[['accommodates', 'bedrooms']])
+    print(learn_dataset)
 
