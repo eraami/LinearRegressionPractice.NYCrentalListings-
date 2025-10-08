@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 """
 neighbourhood_group_cleansed
@@ -20,30 +21,46 @@ review_scores_rating
 -> neighbourhood_group_cleansed + accommodates + bathrooms + bedrooms + review_scores_rating = price
 """
 
+
 def to_num(s: str):
     if ',' in s:
         s = s.replace(',', '')
     return float(s[1:]) if isinstance(s, str) else float(s)
 
+def add_values_to_dataset(dataset, value, group_to_mean):
+    means = dataset.groupby(group_to_mean)[value].mean()
+    dataset[value] = dataset[value].fillna(
+        predict_dataset[group_to_mean].map(means)
+    )
+    print(means)
+
 use_cols = [
     'neighbourhood_group_cleansed',
-    # 'latitude',
-    # 'longitude',
+    'latitude',
+    'longitude',
     'accommodates',
-    'bathrooms',
+    # 'bathrooms',
     'bedrooms',
     # 'amenities',
     'price',
-    'review_scores_rating'
+    # 'review_scores_rating'
 ]
 
 df = pd.read_csv('listings.csv', usecols=use_cols + ['room_type'])
 
-filter_mask_train_data = (df['room_type'] == 'Entire home/apt') & (df['price'])
+data_mask = (df['room_type'] == 'Entire home/apt')
+na_price_data_mask = (df['price'].isna())
 
-train_data_filtered = df.loc[filter_mask_train_data, use_cols]
-train_data_filtered['price'] = train_data_filtered['price'].apply(to_num)
+df = df.loc[data_mask, use_cols]
 
-print(train_data_filtered)
+train_test_dataset = df.loc[~na_price_data_mask, use_cols]
+predict_dataset = df.loc[na_price_data_mask, use_cols]
 
-# print(X, Y)
+train_test_dataset['price'] = train_test_dataset['price'].apply(to_num)
+
+add_values_to_dataset(predict_dataset, 'bedrooms', 'accommodates')
+
+
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+    print(predict_dataset[['accommodates', 'bedrooms']])
+
