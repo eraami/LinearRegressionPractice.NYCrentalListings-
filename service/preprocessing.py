@@ -42,9 +42,9 @@ use_cols = [
     # 'review_scores_rating'
 ]
 
-def preprocessing() -> PreprocessedData:
+def preprocessing(path='../listings.csv') -> PreprocessedData:
 
-    df = pd.read_csv('listings.csv', usecols=use_cols + ['room_type'])
+    df = pd.read_csv(path, usecols=use_cols + ['room_type'])
 
     data_mask = (df['room_type'] == 'Entire home/apt')
     df = df.loc[data_mask, use_cols].copy()
