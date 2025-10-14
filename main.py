@@ -1,11 +1,14 @@
 import numpy as np
+import pandas as pd
+from pprint import pprint
 
 from sklearn import linear_model
 
 
 from service.preprocessing import preprocessing
 from models.SGD import stochastic_gradient_descent
-from models.metrics import mse
+from models.OLS_lr import ols_custom
+from models.metrics import mse, r2
 
 # Y = w1 * accommodates + w2 * bedrooms + w3 * neighbourhood_group_cleansed + b
 
@@ -15,16 +18,22 @@ if __name__ == '__main__':
     data = preprocessing(PATH)
 
     train = data.train
-    X = train[['accommodates', 'bedrooms']].values
+    features = train[['accommodates', 'neighbourhood_group_cleansed']]
+    features = pd.get_dummies(features, columns=['neighbourhood_group_cleansed'], dtype=int)
+    print(features.head())
+    X = features.values
     Y = train['price'].values
 
-    params = stochastic_gradient_descent(X, Y)
+    sgd_custom_params = stochastic_gradient_descent(X, Y)
+    # ols_custom_params = ols_custom(X, Y)
 
     sgd_sk_model = linear_model.LinearRegression()
     sgd_sk_model.fit(X, Y)
 
-    print(sgd_sk_model.coef_, sgd_sk_model.intercept_)
-    print(params)
+    pprint(sgd_custom_params)
+    # print(ols_custom_params)
+    pprint([sgd_sk_model.coef_, sgd_sk_model.intercept_])
 
-    print('MSE custom: ', mse(X, Y, params))
-    print('MSE sk: ', mse(X, Y, [sgd_sk_model.coef_, sgd_sk_model.intercept_]))
+    print('SGD custom MSE: {:.2f}'.format(r2(X, Y, sgd_custom_params)))
+#     print('OLS custom MSE: ', mse(X, Y, ols_custom_params))
+    print('SK MSE: {:.2f}'.format(r2(X, Y, [sgd_sk_model.coef_, sgd_sk_model.intercept_])))
