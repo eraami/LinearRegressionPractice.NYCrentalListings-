@@ -25,10 +25,10 @@ def stochastic_gradient_descent(X, Y, learning_rate=0.0001, epoches=10000, loggi
         mse_by_epoches.append(mse_value)
         if logging_epoches and j % logging_epoches == 0:
             print(mse_value)
-
-    plt.scatter(range(len(mse_by_epoches)), mse_by_epoches)
-    plt.title('MSE to epoches at self made SGD')
-    plt.xlabel('Epoch')
-    plt.ylabel('MSE')
-    plt.show()
+    if logging_epoches:
+        plt.scatter(range(len(mse_by_epoches)), mse_by_epoches)
+        plt.title('MSE to epoches at self made SGD')
+        plt.xlabel('Epoch')
+        plt.ylabel('MSE')
+        plt.show()
     return slopes, intercept

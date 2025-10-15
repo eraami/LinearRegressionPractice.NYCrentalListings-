@@ -3,6 +3,7 @@ import numpy as np
 
 def rss(X, Y, params):
 
+
     y_pred = np.dot(X, params[0]) + params[1]
     rss_value = np.sum((Y - y_pred) ** 2)
     return rss_value
