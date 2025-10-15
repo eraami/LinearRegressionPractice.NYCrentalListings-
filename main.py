@@ -80,5 +80,7 @@ if __name__ == '__main__':
 
     sgd_custom_predictions = predict(predict_features, sgd_custom_params)
     sk_predictions = predict(predict_features, [sgd_sk_model.coef_, sgd_sk_model.intercept_])
-
-    # print(predictions)
+    plt.scatter(predict_features, sgd_custom_predictions, marker='^', c='g', s=10, label='Custom predictions')
+    plt.scatter(predict_features, sk_predictions, marker='s', c='r', s=10, label='Scikit predictions')
+    plt.legend()
+    plt.show()
