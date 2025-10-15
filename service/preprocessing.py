@@ -1,7 +1,7 @@
-from dataclasses import dataclass
-
-import pandas as pd
 import numpy as np
+import pandas as pd
+
+from dataclasses import dataclass
 
 
 @dataclass
@@ -16,10 +16,12 @@ def to_num(s: str):
         s = s.replace(',', '')
     return float(s[1:]) if isinstance(s, str) else float(s)
 
+
 def add_values_to_dataset(dataset, value_name, mean_value_set):
     dataset[value_name] = dataset[value_name].fillna(
         dataset['accommodates'].map(mean_value_set)
     )
+
 
 def split_data_set(dataset, percentage):
 
@@ -41,6 +43,7 @@ use_cols = [
     'price',
     # 'review_scores_rating'
 ]
+
 
 def preprocessing(path='../listings.csv') -> PreprocessedData:
 

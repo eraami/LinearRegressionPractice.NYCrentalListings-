@@ -1,7 +1,7 @@
 import numpy as np
 
+
 def plott(ax, X, Y, model, title, rmse):
-    # print(model[1])
     ax.scatter(X, Y)
     title = '{}'.format(title)
     if model:
